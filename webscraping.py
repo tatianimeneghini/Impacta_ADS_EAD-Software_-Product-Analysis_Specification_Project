@@ -13,5 +13,4 @@ soup = BeautifulSoup(website.content, 'html.parser')
 items = soup.select("div a.htpbqG", class_="productCard")
 
 for item in items:
-    print('Os produtos retornados são: ')
     print(item.text)
