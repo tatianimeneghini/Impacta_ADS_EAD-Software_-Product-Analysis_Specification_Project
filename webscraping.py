@@ -10,7 +10,7 @@ headers = {
 website = requests.get(url, headers=headers)
 soup = BeautifulSoup(website.content, 'html.parser')
 
-items = soup.select("div a.htpbqG", class_="productCard")
+items = soup.select("div a.tEYzR", class_="productCard")
 
 for item in items:
     print(item.text)
