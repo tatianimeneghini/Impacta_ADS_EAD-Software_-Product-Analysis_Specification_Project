@@ -11,15 +11,14 @@ headers = {
 website = requests.get(url, headers=headers)
 soup = BeautifulSoup(website.content, 'html.parser')
 
-items = soup.select("div a.tEYzR", class_="productCard")
-prices = soup.select("span.hQOqhY", class_="priceCard")
+all_products = {'produto': [], 'valor': []}
+products = soup.find_all('div', class_=re.compile('productCard'))
 
-print("Os valores dos produtos disponíveis são: ")
-for price in prices:
-    if (price != "R$ ---"):
-        print(price.get_text())
-
-# print("------------------------")
-# print("Todos os produtos selecionados são: ")
-for item in items:
-    print(item.text)
+for product in products:
+    preco = product.find('span', class_=re.compile('priceCard')).get_text().strip()
+    produto = product.find('span', class_=re.compile('nameCard')).get_text().strip()
+        
+    all_products['produto'].append(produto)
+    all_products['valor'].append(preco)
+    
+print(all_products)
