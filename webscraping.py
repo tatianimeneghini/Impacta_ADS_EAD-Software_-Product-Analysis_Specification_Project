@@ -1,3 +1,4 @@
+import csv
 import math
 from bs4 import BeautifulSoup
 import requests
@@ -17,19 +18,24 @@ index = quantity_items.find(' ')
 quantity = quantity_items[:index]
 last_page = math.ceil(int(quantity)/50)
 
-all_products = {'produto': [], 'valor': []}
+all_products = {'produto':[], 'valor':[]}
 products = soup.find_all('div', class_=re.compile('productCard'))
 
-for i in range(0, last_page + 1):
+for i in range(1, last_page + 1):
     url_page = f'https://www.kabum.com.br/celular-smartphone/smartphones/iphone/iphone-14?page_number={i}&page_size=100&facet_filters=eyJBcm1hemVuYW1lbnRvIjpbIjI1NiBHQiJdfQ==&sort=most_searched'
     website = requests.get(url_page, headers=headers)
     soup = BeautifulSoup(website.content, 'html.parser')
     products = soup.find_all('div', class_=re.compile('productCard'))
     for product in products:
-        preco = product.find('span', class_=re.compile('priceCard')).get_text().strip()
+        preco = product.find('span', class_=re.compile('priceCard')).get_text().strip().replace('R$Â ', 'R$ ')
         produto = product.find('span', class_=re.compile('nameCard')).get_text().strip()
             
         all_products['produto'].append(produto)
         all_products['valor'].append(preco)
     
-print(all_products)
+with open('precos_iphone.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    fieldnames = ['produto', 'valor']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
+    writer.writeheader()
+    for i in range(len(all_products['produto'])):
+        writer.writerow({'produto': all_products['produto'][i], 'valor': all_products['valor'][i]})
